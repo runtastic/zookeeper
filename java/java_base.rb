@@ -123,10 +123,10 @@ class JavaBase
       def processResult(rc, path, queue, children, stat)
         logger.debug { "#{self.class.name}#processResult rc: #{rc}, req_id: #{req_id}, path: #{path}, queue: #{queue.inspect}, children: #{children.inspect}, stat: #{stat.inspect}" }
         hash = {
-          :rc       => rc, 
-          :req_id   => req_id, 
-          :path     => path, 
-          :strings  => (children && children.to_a), 
+          :rc       => rc,
+          :req_id   => req_id,
+          :path     => path,
+          :strings  => (children && children.to_a),
           :stat     => (stat and stat.to_hash),
         }
 
@@ -136,7 +136,7 @@ class JavaBase
 
     class ACLCallback < Callback
       include JZK::AsyncCallback::ACLCallback
-      
+
       def processResult(rc, path, queue, acl, stat)
         logger.debug { "ACLCallback#processResult rc: #{rc.inspect}, req_id: #{req_id}, path: #{path.inspect}, queue: #{queue.inspect}, acl: #{acl.inspect}, stat: #{stat.inspect}" }
         a = Array(acl).map { |a| a.to_hash }
@@ -171,9 +171,9 @@ class JavaBase
 
         if client && (hash[:type] == ZOO_SESSION_EVENT) && (hash[:state] == ZOO_CONNECTED_STATE)
           logger.debug { "#{self.class}##{__method__} notifying client of connected state!" }
-          client.notify_connected! 
+          client.notify_connected!
         end
-        
+
         hash = event.to_hash.merge(:req_id => req_id)
         @event_queue.push(hash)
       end
@@ -189,7 +189,7 @@ class JavaBase
       @req_registry.clear_watchers!
 
       replace_jzk!(opts)
-      wait_until_connected
+      wait_until_connected(timeout)
     end
 
     state
@@ -217,7 +217,7 @@ class JavaBase
     @options = {}
 
 
-    # allows connected-state handlers to be registered before 
+    # allows connected-state handlers to be registered before
     yield self if block_given?
 
     reopen(timeout, nil, options)
@@ -398,12 +398,12 @@ class JavaBase
       stat = JZKD::Stat.new
 
       if callback
-        logger.debug { "calling getACL, path: #{path.inspect}, stat: #{stat.inspect}" } 
+        logger.debug { "calling getACL, path: #{path.inspect}, stat: #{stat.inspect}" }
         jzk.getACL(path, stat, JavaCB::ACLCallback.new(req_id), event_queue)
         [Code::Ok, nil, nil]
       else
         acls = jzk.getACL(path, stat).map { |a| a.to_hash }
-        
+
         [Code::Ok, Array(acls).map{|m| m.to_hash}, stat.to_hash]
       end
     end
@@ -468,7 +468,7 @@ class JavaBase
         watcher ? :sync_watch : :sync
       end
     end
-   
+
     def create_watcher(req_id, path)
       logger.debug { "creating watcher for req_id: #{req_id} path: #{path}" }
       lambda do |event|
