@@ -1,3 +1,7 @@
+v1.4.11.rt1
+  * Make use of the timeout parameter in the JavaBase initializer. Previously the
+    parameter was simply ignored and the default value was used instead (10 seconds).
+
 v1.4.11
   * backported fix for ZOOKEEPER-2253 by @chchen - #76
 
